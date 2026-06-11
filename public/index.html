@@ -2,9 +2,26 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>🎮 Дурак Онлайн</title>
     <style>
+        :root {
+            --bg-dark: #0a1f0f;
+            --bg-medium: #0d2b14;
+            --bg-light: #12381b;
+            --gold: #ffd700;
+            --gold-light: #ffed4a;
+            --gold-dark: #b8960f;
+            --red: #e74c3c;
+            --green: #2ecc71;
+            --blue: #3498db;
+            --white: #ffffff;
+            --gray: #95a5a6;
+            --shadow: 0 4px 20px rgba(0,0,0,0.4);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -12,15 +29,20 @@
         }
         
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #0d3b1e 0%, #1a5c2a 100%);
-            color: white;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-dark);
+            background-image: 
+                radial-gradient(ellipse at top, rgba(255,215,0,0.05) 0%, transparent 70%),
+                radial-gradient(ellipse at bottom, rgba(0,100,0,0.1) 0%, transparent 70%);
+            color: var(--white);
             min-height: 100vh;
+            min-height: 100dvh;
             overflow-x: hidden;
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
             -webkit-user-select: none;
             user-select: none;
+            -webkit-font-smoothing: antialiased;
         }
         
         #app {
@@ -28,12 +50,15 @@
             margin: 0 auto;
             padding: 10px;
             min-height: 100vh;
+            min-height: 100dvh;
+            position: relative;
         }
         
-        /* Экраны */
+        /* ===== ЭКРАНЫ ===== */
         .screen {
             display: none;
             min-height: 100vh;
+            min-height: 100dvh;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -44,217 +69,377 @@
             display: flex;
         }
         
-        /* Меню */
-        .menu-title {
-            font-size: clamp(1.8rem, 7vw, 3.5rem);
-            margin-bottom: 40px;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
-            color: #ffd700;
+        /* ===== МЕНЮ ===== */
+        .menu-logo {
+            font-size: clamp(2.5rem, 10vw, 4.5rem);
+            margin-bottom: 10px;
             text-align: center;
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 2px 10px rgba(255,215,0,0.3));
+            letter-spacing: 2px;
+            font-weight: 900;
         }
         
         .menu-subtitle {
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 40px;
             font-size: 14px;
-            color: #aaa;
-            margin-top: -30px;
-            margin-bottom: 30px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
         }
         
-        .input-group {
-            margin-bottom: 15px;
+        .menu-card {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,215,0,0.1);
+            border-radius: 20px;
+            padding: 30px 25px;
             width: 100%;
-            max-width: 320px;
+            max-width: 380px;
+            box-shadow: var(--shadow);
         }
         
-        .input-group input {
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 16px;
+        }
+        
+        .input-wrapper .icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            opacity: 0.7;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .input-wrapper input {
             width: 100%;
-            padding: 14px 20px;
-            border: 2px solid #ffd700;
-            border-radius: 30px;
-            background: rgba(255,255,255,0.08);
-            color: white;
+            padding: 15px 16px 15px 45px;
+            border: 2px solid rgba(255,215,0,0.2);
+            border-radius: 14px;
+            background: rgba(255,255,255,0.05);
+            color: var(--white);
             font-size: 16px;
             outline: none;
             transition: all 0.3s;
+            font-family: inherit;
         }
         
-        .input-group input:focus {
-            border-color: #fff;
-            background: rgba(255,255,255,0.15);
-            box-shadow: 0 0 20px rgba(255,215,0,0.3);
+        .input-wrapper input:focus {
+            border-color: var(--gold);
+            background: rgba(255,255,255,0.08);
+            box-shadow: 0 0 0 4px rgba(255,215,0,0.1);
+        }
+        
+        .input-wrapper input::placeholder {
+            color: rgba(255,255,255,0.3);
         }
         
         .btn {
-            padding: 14px 30px;
+            width: 100%;
+            padding: 15px;
             border: none;
-            border-radius: 30px;
+            border-radius: 14px;
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
-            margin: 8px;
-            min-width: 200px;
+            margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            touch-action: manipulation;
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:active::after {
+            width: 300px;
+            height: 300px;
         }
         
         .btn:active {
-            transform: scale(0.95);
+            transform: scale(0.97);
         }
         
-        .btn-primary {
-            background: linear-gradient(135deg, #ffd700, #ffaa00);
-            color: #1a3a1a;
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold), #ffaa00);
+            color: #1a1a1a;
+            box-shadow: 0 4px 15px rgba(255,215,0,0.3);
         }
         
-        .btn-secondary {
+        .btn-blue {
             background: linear-gradient(135deg, #4a90e2, #357abd);
             color: white;
+            box-shadow: 0 4px 15px rgba(74,144,226,0.3);
         }
         
-        .btn-danger {
+        .btn-red {
             background: linear-gradient(135deg, #e74c3c, #c0392b);
             color: white;
+            box-shadow: 0 4px 15px rgba(231,76,60,0.3);
         }
         
-        .btn-small {
-            padding: 8px 16px;
+        .btn-sm {
+            width: auto;
+            padding: 10px 20px;
             font-size: 14px;
-            min-width: auto;
+            margin: 4px;
         }
         
-        /* Лобби */
-        .lobby-info {
-            background: rgba(0,0,0,0.3);
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-            width: 100%;
-            max-width: 400px;
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(50%);
         }
         
-        .room-code {
-            font-size: 32px;
-            font-weight: bold;
-            color: #ffd700;
-            letter-spacing: 5px;
-            text-align: center;
-            padding: 10px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 10px;
-            margin: 15px 0;
-        }
-        
-        .player-list {
-            list-style: none;
-            margin: 15px 0;
-        }
-        
-        .player-list li {
-            padding: 10px;
-            margin: 5px 0;
-            background: rgba(255,255,255,0.1);
-            border-radius: 8px;
+        .divider {
             display: flex;
             align-items: center;
-            gap: 10px;
+            margin: 20px 0;
+            color: rgba(255,255,255,0.3);
+            font-size: 13px;
         }
         
-        /* Игровой экран */
-        .game-header {
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .divider span {
+            padding: 0 15px;
+        }
+        
+        /* ===== ЛОББИ ===== */
+        .lobby-card {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,215,0,0.15);
+            border-radius: 20px;
+            padding: 25px;
+            width: 100%;
+            max-width: 450px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+        }
+        
+        .lobby-card h2 {
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .room-code-display {
+            background: rgba(0,0,0,0.3);
+            border: 2px dashed var(--gold);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            font-size: 36px;
+            font-weight: 900;
+            letter-spacing: 8px;
+            color: var(--gold);
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .copy-hint {
+            text-align: center;
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            margin-top: -5px;
+            margin-bottom: 15px;
+        }
+        
+        .player-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            margin: 8px 0;
+            transition: all 0.3s;
+        }
+        
+        .player-item:hover {
+            background: rgba(255,255,255,0.08);
+        }
+        
+        .player-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .player-name {
+            flex: 1;
+            font-weight: 600;
+        }
+        
+        .player-badge {
+            font-size: 11px;
+            background: var(--gold);
+            color: #1a1a1a;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+        
+        /* ===== ИГРОВОЙ ЭКРАН ===== */
+        .game-top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 15px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 15px;
-            margin-bottom: 15px;
+            gap: 10px;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            margin-bottom: 12px;
             flex-wrap: wrap;
-            gap: 10px;
         }
         
-        .trump-section {
+        .trump-badge {
             display: flex;
             align-items: center;
-            gap: 10px;
-        }
-        
-        .deck-section {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            gap: 8px;
+            background: rgba(255,215,0,0.1);
+            padding: 8px 14px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
         }
         
         .mini-card {
-            width: 45px;
-            height: 65px;
-            background: white;
+            width: 40px;
+            height: 56px;
+            background: linear-gradient(145deg, #fff, #f0f0f0);
             border-radius: 6px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            font-size: 13px;
+        }
+        
+        .mini-card.red { color: var(--red); }
+        .mini-card.black { color: #2c3e50; }
+        
+        .deck-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.05);
+            padding: 8px 14px;
+            border-radius: 25px;
             font-size: 14px;
-            font-weight: bold;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            font-weight: 600;
         }
         
-        .mini-card.red {
-            color: #e74c3c;
+        .deck-count {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--gold);
         }
         
-        .mini-card.black {
-            color: #2c3e50;
+        .turn-badge {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 14px;
+            animation: glow 2s infinite;
         }
         
-        .turn-indicator {
-            font-size: 16px;
-            font-weight: bold;
-            padding: 8px 15px;
-            border-radius: 20px;
+        .turn-badge.my-turn {
             background: rgba(255,215,0,0.2);
-            animation: pulse 2s infinite;
+            border: 2px solid var(--gold);
+            color: var(--gold);
         }
         
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
+        .turn-badge.opponent-turn {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.5);
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(255,215,0,0.2); }
+            50% { box-shadow: 0 0 25px rgba(255,215,0,0.5); }
         }
         
         /* Игровой стол */
-        .game-table {
+        .table-container {
             flex: 1;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            min-height: 250px;
+            justify-content: center;
+            min-height: 200px;
             position: relative;
         }
         
-        .table-area {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
+        .table-surface {
+            background: radial-gradient(ellipse at center, rgba(0,80,0,0.3) 0%, transparent 70%);
+            border: 2px solid rgba(255,215,0,0.1);
+            border-radius: 20px;
             padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            min-width: 200px;
             min-height: 120px;
         }
         
-        .card-slot {
+        .card-pair {
             display: flex;
-            gap: 8px;
-            align-items: center;
+            gap: 6px;
+            animation: dealCard 0.3s ease-out;
         }
         
-        .card-on-table {
-            width: 60px;
-            height: 90px;
-            background: white;
+        @keyframes dealCard {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .table-card {
+            width: 55px;
+            height: 80px;
+            background: linear-gradient(145deg, #fff, #e8e8e8);
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 3px 12px rgba(0,0,0,0.3);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -263,413 +448,566 @@
             position: relative;
         }
         
-        .card-on-table.attack-card {
-            border-left: 3px solid #e74c3c;
-        }
+        .table-card.attack { border-left: 3px solid var(--red); }
+        .table-card.defend { border-left: 3px solid var(--green); }
+        .table-card.red { color: var(--red); }
+        .table-card.black { color: #2c3e50; }
         
-        .card-on-table.defend-card {
-            border-left: 3px solid #2ecc71;
-        }
+        .table-card .rank { font-size: 16px; }
+        .table-card .suit { font-size: 20px; }
         
-        .card-on-table.red {
-            color: #e74c3c;
-        }
-        
-        .card-on-table.black {
-            color: #2c3e50;
-        }
-        
-        .card-on-table .card-rank {
-            font-size: 18px;
-            font-weight: bold;
-        }
-        
-        .card-on-table .card-suit {
-            font-size: 22px;
-        }
-        
-        .empty-slot {
-            width: 60px;
-            height: 90px;
-            border: 2px dashed rgba(255,255,255,0.3);
+        .empty-defend-slot {
+            width: 55px;
+            height: 80px;
+            border: 2px dashed rgba(255,255,255,0.2);
             border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.2);
+            font-size: 20px;
         }
         
-        /* Карты в руке */
-        .player-hand {
+        /* Рука игрока */
+        .hand-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 4px;
+            gap: 3px;
             padding: 15px 5px;
-            margin-top: auto;
-            min-height: 120px;
+            margin-top: 10px;
+            min-height: 100px;
             align-items: flex-end;
         }
         
         .hand-card {
-            width: 65px;
-            height: 95px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+            width: 60px;
+            height: 88px;
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             cursor: pointer;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            transition: all 0.3s;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
+            border: 2px solid transparent;
         }
         
         .hand-card:active {
-            transform: translateY(-15px);
+            transform: translateY(-20px) scale(1.05);
+            transition: all 0.1s;
         }
         
         .hand-card.selected {
-            transform: translateY(-25px);
-            box-shadow: 0 8px 25px rgba(255,215,0,0.5);
-            border: 2px solid #ffd700;
+            transform: translateY(-30px) scale(1.08);
+            border-color: var(--gold);
+            box-shadow: 0 12px 30px rgba(255,215,0,0.5);
+            z-index: 10;
         }
         
-        .hand-card.red {
-            color: #e74c3c;
+        .hand-card.trump-card {
+            background: linear-gradient(145deg, #fffef0, #ffe680);
+            border-color: rgba(255,215,0,0.3);
         }
         
-        .hand-card.black {
-            color: #2c3e50;
-        }
+        .hand-card.red { color: var(--red); }
+        .hand-card.black { color: #2c3e50; }
         
-        .hand-card.trump-highlight {
-            background: linear-gradient(135deg, #fff9c4, #ffd700);
-        }
-        
-        .hand-card .card-rank {
-            font-size: 22px;
-            font-weight: bold;
-        }
-        
-        .hand-card .card-suit {
-            font-size: 28px;
-        }
+        .hand-card .rank { font-size: 20px; }
+        .hand-card .suit { font-size: 26px; }
         
         /* Кнопки действий */
-        .action-bar {
+        .actions-bar {
             display: flex;
-            gap: 10px;
-            padding: 15px;
+            gap: 8px;
+            padding: 12px;
             flex-wrap: wrap;
             justify-content: center;
-            background: rgba(0,0,0,0.3);
-            border-radius: 15px;
-            margin-top: 15px;
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            margin-top: 10px;
         }
         
-        /* Чат */
-        .chat-widget {
+        /* ===== ЧАТ (ИСПРАВЛЕННЫЙ) ===== */
+        .chat-fab {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 280px;
-            max-height: 350px;
-            background: rgba(0,0,0,0.85);
-            border-radius: 15px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), #ffaa00);
+            border: none;
+            color: #1a1a1a;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 6px 25px rgba(255,215,0,0.4);
+            z-index: 999;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .chat-fab:active {
+            transform: scale(0.9);
+        }
+        
+        .chat-fab .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--red);
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .chat-panel {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: calc(100vw - 40px);
+            max-width: 320px;
+            max-height: 400px;
+            background: rgba(10,25,15,0.95);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,215,0,0.2);
+            border-radius: 20px;
             display: flex;
             flex-direction: column;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
+            z-index: 998;
+            transform: translateY(20px) scale(0.95);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
         
-        .chat-header {
-            padding: 8px 15px;
-            background: rgba(255,215,0,0.2);
-            border-radius: 15px 15px 0 0;
-            font-size: 14px;
-            font-weight: bold;
+        .chat-panel.open {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .chat-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .chat-panel-header h3 {
+            font-size: 16px;
+            color: var(--gold);
+            margin: 0;
+        }
+        
+        .chat-close-btn {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.5);
+            font-size: 20px;
             cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
         }
         
-        .chat-messages {
+        .chat-close-btn:active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .chat-messages-container {
             flex: 1;
             overflow-y: auto;
             padding: 10px;
-            max-height: 200px;
-            font-size: 13px;
+            max-height: 250px;
+            -webkit-overflow-scrolling: touch;
         }
         
         .chat-message {
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.4;
             word-break: break-word;
+            animation: msgIn 0.2s ease-out;
         }
         
-        .chat-message .name {
-            color: #ffd700;
-            font-weight: bold;
+        @keyframes msgIn {
+            from { transform: translateX(-10px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
         
-        .chat-input-area {
+        .chat-message .author {
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 12px;
+        }
+        
+        .chat-message .text {
+            color: rgba(255,255,255,0.9);
+            margin-top: 2px;
+        }
+        
+        .chat-input-row {
             display: flex;
-            padding: 8px;
-            gap: 5px;
+            gap: 8px;
+            padding: 10px;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
         
-        .chat-input-area input {
+        .chat-input-row input {
             flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #ffd700;
-            border-radius: 20px;
-            background: rgba(255,255,255,0.1);
+            padding: 10px 14px;
+            border: 1px solid rgba(255,215,0,0.3);
+            border-radius: 25px;
+            background: rgba(255,255,255,0.08);
             color: white;
-            font-size: 13px;
+            font-size: 14px;
             outline: none;
+            font-family: inherit;
+            transition: all 0.3s;
         }
         
-        .chat-input-area button {
-            padding: 8px 12px;
+        .chat-input-row input:focus {
+            border-color: var(--gold);
+            background: rgba(255,255,255,0.12);
+        }
+        
+        .chat-input-row button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gold);
             border: none;
-            border-radius: 20px;
-            background: #ffd700;
-            color: #1a3a1a;
-            font-weight: bold;
+            color: #1a1a1a;
+            font-size: 18px;
             cursor: pointer;
-            font-size: 13px;
+            flex-shrink: 0;
+            font-weight: bold;
+            transition: all 0.2s;
         }
         
-        /* Адаптивность для мобильных */
+        .chat-input-row button:active {
+            transform: scale(0.9);
+            background: #ffaa00;
+        }
+        
+        /* ===== МЕДИА-ЗАПРОСЫ ===== */
         @media (max-width: 768px) {
             .hand-card {
-                width: 52px;
-                height: 78px;
-            }
-            
-            .hand-card .card-rank {
-                font-size: 16px;
-            }
-            
-            .hand-card .card-suit {
-                font-size: 20px;
-            }
-            
-            .card-on-table {
                 width: 48px;
                 height: 72px;
             }
             
-            .card-on-table .card-rank {
-                font-size: 14px;
+            .hand-card .rank { font-size: 16px; }
+            .hand-card .suit { font-size: 20px; }
+            
+            .table-card {
+                width: 44px;
+                height: 66px;
             }
             
-            .card-on-table .card-suit {
-                font-size: 18px;
+            .table-card .rank { font-size: 13px; }
+            .table-card .suit { font-size: 16px; }
+            
+            .empty-defend-slot {
+                width: 44px;
+                height: 66px;
             }
             
-            .empty-slot {
-                width: 48px;
-                height: 72px;
+            .btn-sm {
+                padding: 8px 14px;
+                font-size: 12px;
             }
             
-            .chat-widget {
-                width: 250px;
+            .chat-panel {
+                bottom: 80px;
                 right: 10px;
-                bottom: 10px;
+                max-width: calc(100vw - 20px);
+                max-height: 60vh;
             }
             
-            .btn {
-                padding: 12px 20px;
-                font-size: 14px;
-                min-width: 140px;
+            .chat-fab {
+                bottom: 15px;
+                right: 15px;
+                width: 50px;
+                height: 50px;
+                font-size: 22px;
             }
         }
         
         @media (max-width: 480px) {
             .hand-card {
-                width: 42px;
-                height: 63px;
-                gap: 2px;
+                width: 38px;
+                height: 58px;
+                gap: 1px;
             }
             
-            .hand-card .card-rank {
-                font-size: 13px;
+            .hand-card .rank { font-size: 13px; }
+            .hand-card .suit { font-size: 16px; }
+            
+            .table-card {
+                width: 36px;
+                height: 54px;
             }
             
-            .hand-card .card-suit {
+            .table-card .rank { font-size: 11px; }
+            .table-card .suit { font-size: 13px; }
+            
+            .empty-defend-slot {
+                width: 36px;
+                height: 54px;
                 font-size: 16px;
             }
             
-            .card-on-table {
-                width: 38px;
-                height: 57px;
+            .table-surface {
+                gap: 6px;
+                padding: 10px;
             }
             
-            .card-on-table .card-rank {
+            .card-pair {
+                gap: 4px;
+            }
+            
+            .game-top-bar {
+                padding: 8px 10px;
+                gap: 6px;
+            }
+            
+            .trump-badge, .deck-badge {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            
+            .mini-card {
+                width: 32px;
+                height: 44px;
                 font-size: 11px;
             }
             
-            .card-on-table .card-suit {
-                font-size: 14px;
-            }
-            
-            .empty-slot {
-                width: 38px;
-                height: 57px;
-            }
-            
-            .chat-widget {
-                width: 200px;
-                right: 5px;
-                bottom: 5px;
-                max-height: 250px;
-            }
-            
-            .action-bar {
-                padding: 10px 5px;
-                gap: 5px;
-            }
-            
-            .btn {
-                padding: 10px 15px;
+            .turn-badge {
+                padding: 8px 14px;
                 font-size: 12px;
-                min-width: 100px;
             }
             
-            .table-area {
-                gap: 8px;
-                padding: 10px;
+            .actions-bar {
+                gap: 4px;
+                padding: 8px;
+            }
+            
+            .btn-sm {
+                padding: 8px 10px;
+                font-size: 11px;
+            }
+            
+            .chat-panel {
+                bottom: 70px;
+                right: 5px;
+                max-width: calc(100vw - 10px);
+                border-radius: 16px;
+                max-height: 55vh;
+            }
+            
+            .chat-messages-container {
+                max-height: 180px;
+            }
+            
+            .chat-fab {
+                bottom: 12px;
+                right: 12px;
+                width: 44px;
+                height: 44px;
+                font-size: 20px;
             }
         }
         
-        /* Анимации */
-        @keyframes slideUp {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        /* Ландшафтная ориентация на мобильных */
+        @media (max-width: 900px) and (orientation: landscape) {
+            .table-container {
+                min-height: 120px;
+            }
+            
+            .hand-container {
+                min-height: 70px;
+                padding: 8px 5px;
+            }
+            
+            .chat-panel {
+                max-height: 70vh;
+            }
+            
+            .chat-messages-container {
+                max-height: 120px;
+            }
         }
         
-        .animate-in {
-            animation: slideUp 0.4s ease-out;
-        }
-        
-        .status-message {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.1);
-            text-align: center;
+        /* Уведомления */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
             font-size: 14px;
+            font-weight: 600;
+            z-index: 2000;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255,255,255,0.2);
+            text-align: center;
+            max-width: 90vw;
         }
         
-        .status-message.error {
-            background: rgba(231,76,60,0.3);
-            color: #ff6b6b;
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
         }
         
-        .status-message.success {
-            background: rgba(46,204,113,0.3);
-            color: #2ecc71;
+        .toast.error {
+            border-color: var(--red);
+            background: rgba(231,76,60,0.9);
+        }
+        
+        .toast.success {
+            border-color: var(--green);
+            background: rgba(46,204,113,0.9);
         }
     </style>
 </head>
 <body>
     <div id="app">
-        <!-- Меню -->
+        <!-- ===== МЕНЮ ===== -->
         <div id="menu-screen" class="screen active">
-            <h1 class="menu-title">♠️ ДУРАК ♥️<br>♣️ ОНЛАЙН ♦️</h1>
-            <p class="menu-subtitle">Многопользовательская карточная игра</p>
+            <div class="menu-logo">♠️ ДУРАК ♥️</div>
+            <div class="menu-subtitle">Онлайн</div>
             
-            <div class="input-group">
-                <input type="text" id="playerNameInput" placeholder="👤 Ваше имя" maxlength="20" autocomplete="off">
+            <div class="menu-card">
+                <div class="input-wrapper">
+                    <span class="icon">👤</span>
+                    <input type="text" id="playerNameInput" placeholder="Ваше имя" maxlength="20" autocomplete="off">
+                </div>
+                
+                <button class="btn btn-gold" onclick="createRoom()">
+                    ✨ Создать комнату
+                </button>
+                
+                <div class="divider"><span>или</span></div>
+                
+                <div class="input-wrapper">
+                    <span class="icon">🔑</span>
+                    <input type="text" id="roomCodeInput" placeholder="Код комнаты" maxlength="6" autocomplete="off" style="text-transform: uppercase;">
+                </div>
+                
+                <button class="btn btn-blue" onclick="joinRoom()">
+                    🚪 Присоединиться
+                </button>
             </div>
-            
-            <button class="btn btn-primary" onclick="createRoom()">
-                ✨ Создать комнату
-            </button>
-            
-            <div style="margin: 20px 0; color: #ffd700;">— или —</div>
-            
-            <div class="input-group">
-                <input type="text" id="roomCodeInput" placeholder="🔑 Код комнаты" maxlength="6" autocomplete="off" style="text-transform: uppercase;">
-            </div>
-            
-            <button class="btn btn-secondary" onclick="joinRoom()">
-                🚪 Присоединиться
-            </button>
-            
-            <div id="menu-status" class="status-message" style="display: none;"></div>
         </div>
         
-        <!-- Лобби -->
+        <!-- ===== ЛОББИ ===== -->
         <div id="lobby-screen" class="screen">
-            <h2 style="color: #ffd700;">🎯 Комната ожидания</h2>
-            
-            <div class="lobby-info">
-                <p>Код комнаты:</p>
-                <div class="room-code" id="lobbyRoomCode"></div>
-                <p style="font-size: 14px; color: #aaa;">Отправьте этот код друзьям</p>
+            <div class="lobby-card">
+                <h2>🎯 Комната ожидания</h2>
+                
+                <p style="text-align: center; color: rgba(255,255,255,0.6); font-size: 14px;">Код комнаты:</p>
+                <div class="room-code-display" id="lobbyRoomCode">------</div>
+                <p class="copy-hint">👆 Отправьте этот код друзьям</p>
+                
+                <p style="font-weight: 600; margin-bottom: 10px;">👥 Игроки (<span id="playerCount">0</span>/4):</p>
+                <div id="playersList"></div>
             </div>
             
-            <div class="lobby-info">
-                <p>👥 Игроки (<span id="playerCount">0</span>/4):</p>
-                <ul class="player-list" id="playersList"></ul>
-            </div>
-            
-            <button class="btn btn-primary" id="startGameBtn" onclick="startGame()" disabled>
+            <button class="btn btn-gold" id="startGameBtn" onclick="startGame()" disabled style="max-width: 450px;">
                 🎮 Начать игру
             </button>
             
-            <button class="btn btn-danger btn-small" onclick="leaveRoom()">
+            <button class="btn btn-red" onclick="leaveRoom()" style="max-width: 450px; margin-top: 8px;">
                 🚶 Покинуть комнату
             </button>
         </div>
         
-        <!-- Игра -->
+        <!-- ===== ИГРА ===== -->
         <div id="game-screen" class="screen">
-            <!-- Шапка -->
-            <div class="game-header">
-                <div class="trump-section">
-                    <span>🃏 Козырь:</span>
+            <!-- Верхняя панель -->
+            <div class="game-top-bar">
+                <div class="trump-badge">
+                    <span>🃏</span>
                     <div id="trumpCardDisplay" class="mini-card"></div>
                 </div>
                 
-                <div class="deck-section">
-                    <span>📦 Колода:</span>
-                    <span id="deckCount" style="font-size: 20px; font-weight: bold;">0</span>
+                <div class="deck-badge">
+                    <span>📦</span>
+                    <span class="deck-count" id="deckCount">0</span>
                 </div>
                 
-                <div id="turnIndicator" class="turn-indicator"></div>
+                <div id="turnIndicator" class="turn-badge"></div>
             </div>
             
-            <!-- Игровой стол -->
-            <div class="game-table">
-                <div id="tableArea" class="table-area"></div>
+            <!-- Стол -->
+            <div class="table-container">
+                <div class="table-surface" id="tableArea"></div>
             </div>
             
             <!-- Карты игрока -->
-            <div id="playerHand" class="player-hand"></div>
+            <div id="playerHand" class="hand-container"></div>
             
             <!-- Кнопки действий -->
-            <div id="actionBar" class="action-bar" style="display: none;">
-                <button class="btn btn-primary btn-small" id="attackBtn" onclick="doAction('attack')">
+            <div id="actionsBar" class="actions-bar" style="display: none;">
+                <button class="btn btn-gold btn-sm" id="attackBtn" onclick="doAction('attack')">
                     ⚔️ Подкинуть
                 </button>
-                <button class="btn btn-secondary btn-small" id="passBtn" onclick="doAction('pass')">
+                <button class="btn btn-blue btn-sm" id="passBtn" onclick="doAction('pass')">
                     ✅ Бито
                 </button>
-                <button class="btn btn-danger btn-small" id="takeBtn" onclick="doAction('take')">
+                <button class="btn btn-red btn-sm" id="takeBtn" onclick="doAction('take')">
                     📥 Забрать
                 </button>
             </div>
         </div>
     </div>
     
-    <!-- Чат -->
-    <div class="chat-widget" id="chatWidget" style="display: none;">
-        <div class="chat-header" onclick="toggleChat()">💬 Чат ▼</div>
-        <div class="chat-messages" id="chatMessages"></div>
-        <div class="chat-input-area">
-            <input type="text" id="chatInput" placeholder="Сообщение..." maxlength="200" autocomplete="off">
+    <!-- ===== ЧАТ FAB ===== -->
+    <button class="chat-fab" id="chatFab" onclick="toggleChat()" style="display: none;" title="Чат">
+        💬
+        <span class="badge" id="chatBadge">0</span>
+    </button>
+    
+    <!-- ===== ЧАТ ПАНЕЛЬ ===== -->
+    <div class="chat-panel" id="chatPanel">
+        <div class="chat-panel-header">
+            <h3>💬 Чат игры</h3>
+            <button class="chat-close-btn" onclick="toggleChat()">✕</button>
+        </div>
+        <div class="chat-messages-container" id="chatMessages"></div>
+        <div class="chat-input-row">
+            <input type="text" id="chatInput" placeholder="Написать сообщение..." maxlength="200" autocomplete="off">
             <button onclick="sendChat()">➤</button>
         </div>
     </div>
+    
+    <!-- ===== ТОСТ УВЕДОМЛЕНИЯ ===== -->
+    <div class="toast" id="toast"></div>
     
     <script>
         // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
@@ -679,49 +1017,108 @@
         let playerName = '';
         let gameState = null;
         let selectedCard = null;
+        let chatOpen = false;
+        let unreadMessages = 0;
+        let toastTimer = null;
         
-        // Символы мастей
-        const SUITS = {
-            'hearts': '♥',
-            'diamonds': '♦',
-            'clubs': '♣',
-            'spades': '♠'
-        };
+        // Символы
+        const SUITS = { 'hearts': '♥', 'diamonds': '♦', 'clubs': '♣', 'spades': '♠' };
+        const RANKS = { '6': '6', '7': '7', '8': '8', '9': '9', '10': '10', 'J': 'J', 'Q': 'Q', 'K': 'K', 'A': 'A' };
         
-        // Отображение рангов
-        const RANKS = {
-            '6': '6', '7': '7', '8': '8', '9': '9', '10': '10',
-            'J': 'J', 'Q': 'Q', 'K': 'K', 'A': 'A'
-        };
+        // ===== ТОСТЫ =====
+        function showToast(msg, type = '') {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = `toast ${type} show`;
+            
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+        
+        // ===== ЧАТ =====
+        function toggleChat() {
+            const panel = document.getElementById('chatPanel');
+            chatOpen = !chatOpen;
+            
+            if (chatOpen) {
+                panel.classList.add('open');
+                unreadMessages = 0;
+                updateChatBadge();
+                setTimeout(() => {
+                    document.getElementById('chatInput').focus();
+                }, 300);
+            } else {
+                panel.classList.remove('open');
+            }
+        }
+        
+        function sendChat() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            
+            if (text && ws?.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    type: 'chat_message',
+                    roomId: roomId,
+                    message: text
+                }));
+                input.value = '';
+                input.focus();
+            }
+        }
+        
+        function addChat(name, text) {
+            const container = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = 'chat-message';
+            div.innerHTML = `
+                <div class="author">${name}</div>
+                <div class="text">${text}</div>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+            
+            if (!chatOpen) {
+                unreadMessages++;
+                updateChatBadge();
+            }
+        }
+        
+        function updateChatBadge() {
+            const badge = document.getElementById('chatBadge');
+            if (unreadMessages > 0) {
+                badge.textContent = unreadMessages > 99 ? '99+' : unreadMessages;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
         
         // ===== ПОДКЛЮЧЕНИЕ =====
         function connect() {
             const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsUrl = `${protocol}//${location.host}`;
-            
-            ws = new WebSocket(wsUrl);
+            ws = new WebSocket(`${protocol}//${location.host}`);
             
             ws.onopen = () => {
-                console.log('✅ Подключено к серверу');
-                showStatus('Подключено!', 'success', 'menu');
+                console.log('✅ Подключено');
+                showToast('Подключено к серверу', 'success');
             };
             
             ws.onmessage = (e) => {
                 try {
-                    const msg = JSON.parse(e.data);
-                    handleMessage(msg);
+                    handleMessage(JSON.parse(e.data));
                 } catch (err) {
-                    console.error('Ошибка парсинга:', err);
+                    console.error('Ошибка:', err);
                 }
             };
             
-            ws.onerror = () => {
-                showStatus('Ошибка соединения', 'error', 'menu');
-            };
+            ws.onerror = () => showToast('Ошибка соединения', 'error');
             
             ws.onclose = () => {
-                showStatus('Соединение потеряно', 'error', 'menu');
-                setTimeout(connect, 5000); // Переподключение
+                showToast('Соединение потеряно. Переподключение...', 'error');
+                setTimeout(connect, 5000);
             };
         }
         
@@ -733,6 +1130,7 @@
                     showScreen('lobby');
                     document.getElementById('lobbyRoomCode').textContent = msg.roomId;
                     updatePlayerCount(1);
+                    showToast('Комната создана!', 'success');
                     break;
                     
                 case 'joined_room':
@@ -746,12 +1144,14 @@
                 case 'player_joined':
                     updatePlayerCount(msg.playerCount);
                     updatePlayersList(msg.players);
+                    showToast(`${msg.playerName} присоединился!`, 'success');
                     break;
                     
                 case 'game_state':
                     gameState = msg;
                     showScreen('game');
                     renderGame();
+                    document.getElementById('chatFab').style.display = 'flex';
                     break;
                     
                 case 'chat_message':
@@ -759,12 +1159,12 @@
                     break;
                     
                 case 'game_over':
-                    alert(`🏆 Победитель: ${msg.winner}!`);
-                    setTimeout(() => leaveRoom(), 1000);
+                    showToast(`🏆 Победитель: ${msg.winner}!`, 'success');
+                    setTimeout(() => leaveRoom(), 2000);
                     break;
                     
                 case 'error':
-                    alert('❌ ' + msg.message);
+                    showToast(msg.message, 'error');
                     break;
                     
                 case 'player_left':
@@ -773,23 +1173,20 @@
                     break;
                     
                 case 'player_disconnected':
-                    alert(msg.message);
+                    showToast(msg.message, 'error');
                     break;
             }
         }
         
-        // ===== СОЗДАНИЕ / ПРИСОЕДИНЕНИЕ =====
+        // ===== КОМНАТЫ =====
         function createRoom() {
             playerName = document.getElementById('playerNameInput').value.trim();
-            if (!playerName) return alert('Введите имя!');
+            if (!playerName) return showToast('Введите имя!', 'error');
             
             if (ws?.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({
-                    type: 'create_room',
-                    playerName: playerName
-                }));
+                ws.send(JSON.stringify({ type: 'create_room', playerName }));
             } else {
-                alert('Нет подключения к серверу');
+                showToast('Нет подключения', 'error');
                 connect();
             }
         }
@@ -798,26 +1195,19 @@
             playerName = document.getElementById('playerNameInput').value.trim();
             const code = document.getElementById('roomCodeInput').value.trim().toUpperCase();
             
-            if (!playerName) return alert('Введите имя!');
-            if (!code) return alert('Введите код комнаты!');
+            if (!playerName) return showToast('Введите имя!', 'error');
+            if (!code) return showToast('Введите код комнаты!', 'error');
             
             if (ws?.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({
-                    type: 'join_room',
-                    roomId: code,
-                    playerName: playerName
-                }));
+                ws.send(JSON.stringify({ type: 'join_room', roomId: code, playerName }));
             } else {
-                alert('Нет подключения к серверу');
+                showToast('Нет подключения', 'error');
                 connect();
             }
         }
         
         function startGame() {
-            ws.send(JSON.stringify({
-                type: 'start_game',
-                roomId: roomId
-            }));
+            ws.send(JSON.stringify({ type: 'start_game', roomId }));
         }
         
         function leaveRoom() {
@@ -825,17 +1215,17 @@
             roomId = null;
             gameState = null;
             selectedCard = null;
-            document.getElementById('chatWidget').style.display = 'none';
+            document.getElementById('chatFab').style.display = 'none';
+            document.getElementById('chatPanel').classList.remove('open');
+            chatOpen = false;
+            unreadMessages = 0;
+            updateChatBadge();
+            document.getElementById('chatMessages').innerHTML = '';
         }
         
         // ===== ИГРОВЫЕ ДЕЙСТВИЯ =====
         function selectCard(cardElement, cardCode) {
-            // Снять выделение
-            document.querySelectorAll('.hand-card').forEach(c => {
-                c.classList.remove('selected');
-            });
-            
-            // Выделить новую
+            document.querySelectorAll('.hand-card').forEach(c => c.classList.remove('selected'));
             cardElement.classList.add('selected');
             selectedCard = cardCode;
         }
@@ -843,23 +1233,17 @@
         function doAction(action) {
             if (!ws || !gameState) return;
             
-            const msg = {
-                type: 'game_action',
-                roomId: roomId,
-                action: action
-            };
+            const msg = { type: 'game_action', roomId, action };
+            
+            if ((action === 'attack' || action === 'defend') && !selectedCard) {
+                return showToast('Выберите карту!', 'error');
+            }
             
             if (action === 'attack' || action === 'defend') {
-                if (!selectedCard) {
-                    return alert('Выберите карту!');
-                }
                 msg.card = selectedCard;
-                
                 if (action === 'defend') {
                     const idx = gameState.table.findIndex(p => !p.defend);
-                    if (idx === -1) {
-                        return alert('Нечего отбивать!');
-                    }
+                    if (idx === -1) return showToast('Нечего отбивать!', 'error');
                     msg.pairIndex = idx;
                 }
             }
@@ -868,14 +1252,14 @@
             selectedCard = null;
         }
         
-        // ===== РЕНДЕРИНГ ИГРЫ =====
+        // ===== РЕНДЕРИНГ =====
         function renderGame() {
             if (!gameState) return;
             
             // Козырь
             const trumpDiv = document.getElementById('trumpCardDisplay');
             if (gameState.trumpCard) {
-                trumpDiv.innerHTML = cardHTML(gameState.trumpCard);
+                trumpDiv.innerHTML = cardContent(gameState.trumpCard);
                 trumpDiv.className = `mini-card ${getColor(gameState.trumpCard)}`;
                 trumpDiv.style.display = 'flex';
             } else {
@@ -889,55 +1273,50 @@
             const table = document.getElementById('tableArea');
             table.innerHTML = '';
             
-            gameState.table.forEach((pair, i) => {
-                const slot = document.createElement('div');
-                slot.className = 'card-slot animate-in';
-                
-                slot.innerHTML = `
-                    <div class="card-on-table attack-card ${getColor(pair.attack)}">
-                        ${cardHTML(pair.attack)}
-                    </div>
-                    ${pair.defend ? `
-                        <div class="card-on-table defend-card ${getColor(pair.defend)}">
-                            ${cardHTML(pair.defend)}
+            if (gameState.table.length === 0) {
+                table.innerHTML = '<div style="color: rgba(255,255,255,0.2); padding: 40px; text-align: center;">🎯 Стол пуст</div>';
+            } else {
+                gameState.table.forEach(pair => {
+                    const pairDiv = document.createElement('div');
+                    pairDiv.className = 'card-pair';
+                    pairDiv.innerHTML = `
+                        <div class="table-card attack ${getColor(pair.attack)}">
+                            ${cardContent(pair.attack)}
                         </div>
-                    ` : '<div class="empty-slot"></div>'}
-                `;
-                
-                table.appendChild(slot);
-            });
+                        ${pair.defend ? `
+                            <div class="table-card defend ${getColor(pair.defend)}">
+                                ${cardContent(pair.defend)}
+                            </div>
+                        ` : '<div class="empty-defend-slot">?</div>'}
+                    `;
+                    table.appendChild(pairDiv);
+                });
+            }
             
-            // Рука игрока
+            // Рука
             const hand = document.getElementById('playerHand');
             hand.innerHTML = '';
             
             if (gameState.hand) {
                 gameState.hand.forEach(card => {
                     const div = document.createElement('div');
-                    const isTrump = card.split('_')[1] === gameState.trumpCard?.split('_')[1];
+                    const trumpSuit = gameState.trumpCard?.split('_')[1];
+                    const isTrump = card.split('_')[1] === trumpSuit;
                     
-                    div.className = `hand-card ${getColor(card)} ${isTrump ? 'trump-highlight' : ''} animate-in`;
-                    div.innerHTML = cardHTML(card);
+                    div.className = `hand-card ${getColor(card)} ${isTrump ? 'trump-card' : ''}`;
+                    div.innerHTML = cardContent(card);
                     div.onclick = () => selectCard(div, card);
                     hand.appendChild(div);
                 });
             }
             
-            // Кнопки действий
             updateActions();
-            
-            // Индикатор хода
             updateTurnIndicator();
-            
-            // Показать чат
-            document.getElementById('chatWidget').style.display = 'flex';
         }
         
-        function cardHTML(cardStr) {
+        function cardContent(cardStr) {
             const [rank, suit] = cardStr.split('_');
-            const suitSym = SUITS[suit] || suit;
-            const rankVal = RANKS[rank] || rank;
-            return `<div class="card-rank">${rankVal}</div><div class="card-suit">${suitSym}</div>`;
+            return `<div class="rank">${RANKS[rank] || rank}</div><div class="suit">${SUITS[suit] || suit}</div>`;
         }
         
         function getColor(cardStr) {
@@ -947,110 +1326,51 @@
         }
         
         function updateActions() {
-            const bar = document.getElementById('actionBar');
-            const attackBtn = document.getElementById('attackBtn');
-            const passBtn = document.getElementById('passBtn');
-            const takeBtn = document.getElementById('takeBtn');
+            const bar = document.getElementById('actionsBar');
+            const atk = document.getElementById('attackBtn');
+            const pass = document.getElementById('passBtn');
+            const take = document.getElementById('takeBtn');
             
-            // Скрываем всё
-            [attackBtn, passBtn, takeBtn].forEach(b => b.style.display = 'none');
+            [atk, pass, take].forEach(b => b.style.display = 'none');
             bar.style.display = 'none';
             
-            if (!gameState) return;
-            
-            const isMyTurn = gameState.currentPlayer === playerId;
-            const isAttacker = gameState.attacker === playerId;
-            const isDefender = gameState.defender === playerId;
-            
-            if (!isMyTurn) return;
+            if (!gameState || gameState.currentPlayer !== playerId) return;
             
             bar.style.display = 'flex';
             
+            const isAttacker = gameState.attacker === playerId;
+            const isDefender = gameState.defender === playerId;
+            
             if (gameState.turnPhase === 'attack' && isAttacker) {
-                attackBtn.style.display = 'block';
-                if (gameState.table.length > 0) {
-                    passBtn.style.display = 'block';
-                }
+                atk.style.display = 'inline-block';
+                atk.textContent = '⚔️ Подкинуть';
+                if (gameState.table.length > 0) pass.style.display = 'inline-block';
             }
             
             if (gameState.turnPhase === 'defense' && isDefender) {
-                attackBtn.style.display = 'block';
-                attackBtn.textContent = '🛡️ Отбить';
-                takeBtn.style.display = 'block';
+                atk.style.display = 'inline-block';
+                atk.textContent = '🛡️ Отбить';
+                take.style.display = 'inline-block';
             }
         }
         
         function updateTurnIndicator() {
             const ind = document.getElementById('turnIndicator');
-            if (!gameState) {
-                ind.textContent = '';
-                return;
-            }
+            if (!gameState) { ind.textContent = ''; return; }
             
-            const phase = gameState.turnPhase === 'attack' ? 'Атакует' : 'Защищается';
+            const phase = gameState.turnPhase === 'attack' ? 'Атака' : 'Защита';
             const isMe = gameState.currentPlayer === playerId;
             
-            ind.textContent = isMe ? `🎯 Ваш ход (${phase})` : `⏳ Ход соперника`;
+            ind.textContent = isMe ? `🎯 Ваш ход` : `⏳ Ход соперника`;
+            ind.className = `turn-badge ${isMe ? 'my-turn' : 'opponent-turn'}`;
         }
         
-        // ===== ЧАТ =====
-        function sendChat() {
-            const input = document.getElementById('chatInput');
-            const text = input.value.trim();
-            
-            if (text && ws?.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({
-                    type: 'chat_message',
-                    roomId: roomId,
-                    message: text
-                }));
-                input.value = '';
-            }
-        }
-        
-        function addChat(name, text) {
-            const container = document.getElementById('chatMessages');
-            const div = document.createElement('div');
-            div.className = 'chat-message';
-            div.innerHTML = `<span class="name">${name}:</span> ${text}`;
-            container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
-        }
-        
-        function toggleChat() {
-            const msgs = document.getElementById('chatMessages');
-            const header = document.querySelector('.chat-header');
-            if (msgs.style.display === 'none') {
-                msgs.style.display = 'block';
-                header.textContent = '💬 Чат ▼';
-            } else {
-                msgs.style.display = 'none';
-                header.textContent = '💬 Чат ▶';
-            }
-        }
-        
-        // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
+        // ===== ВСПОМОГАТЕЛЬНЫЕ =====
         function showScreen(name) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            
-            const map = {
-                'menu': 'menu-screen',
-                'lobby': 'lobby-screen',
-                'game': 'game-screen'
-            };
-            
+            const map = { 'menu': 'menu-screen', 'lobby': 'lobby-screen', 'game': 'game-screen' };
             const id = map[name];
             if (id) document.getElementById(id).classList.add('active');
-        }
-        
-        function showStatus(msg, type, screen) {
-            const el = document.getElementById(`${screen}-status`);
-            if (el) {
-                el.textContent = msg;
-                el.className = `status-message ${type}`;
-                el.style.display = 'block';
-                setTimeout(() => el.style.display = 'none', 4000);
-            }
         }
         
         function updatePlayerCount(count) {
@@ -1061,35 +1381,50 @@
         function updatePlayersList(players) {
             const list = document.getElementById('playersList');
             if (list && players) {
-                list.innerHTML = players.map(p => 
-                    `<li>👤 ${p.name} ${p.id === playerId ? '(Вы)' : ''}</li>`
-                ).join('');
+                list.innerHTML = players.map(p => `
+                    <div class="player-item">
+                        <div class="player-avatar">${p.name[0].toUpperCase()}</div>
+                        <div class="player-name">${p.name}</div>
+                        ${p.id === playerId ? '<div class="player-badge">Вы</div>' : ''}
+                    </div>
+                `).join('');
             }
         }
         
-        // ===== ОБРАБОТЧИКИ КЛАВИШ =====
+        // ===== КЛАВИШИ =====
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 if (document.activeElement === document.getElementById('chatInput')) {
                     sendChat();
                 } else if (document.activeElement === document.getElementById('roomCodeInput')) {
                     joinRoom();
-                } else if (document.activeElement === document.getElementById('playerNameInput')) {
-                    createRoom();
                 }
+            }
+            
+            if (e.key === 'Escape' && chatOpen) {
+                toggleChat();
             }
         });
         
         // ===== ЗАПУСК =====
         window.addEventListener('load', () => {
             connect();
-            
-            // Автофокус на поле имени
             document.getElementById('playerNameInput').focus();
         });
         
-        // Предотвращение зума на мобильных
+        // Предотвращение зума
         document.addEventListener('gesturestart', (e) => e.preventDefault());
+        
+        // Закрытие чата при клике вне его
+        document.addEventListener('click', (e) => {
+            if (chatOpen) {
+                const panel = document.getElementById('chatPanel');
+                const fab = document.getElementById('chatFab');
+                if (!panel.contains(e.target) && !fab.contains(e.target)) {
+                    toggleChat();
+                }
+            }
+        });
     </script>
 </body>
 </html>
