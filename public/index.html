@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🎮 Дурак Онлайн</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0d3b1e 0%, #1a5c2a 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        #app {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px;
+            min-height: 100vh;
+        }
+        
+        /* Экраны */
+        .screen {
+            display: none;
+            min-height: 100vh;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .screen.active {
+            display: flex;
+        }
+        
+        /* Меню */
+        .menu-title {
+            font-size: clamp(1.8rem, 7vw, 3.5rem);
+            margin-bottom: 40px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+            color: #ffd700;
+            text-align: center;
+        }
+        
+        .menu-subtitle {
+            font-size: 14px;
+            color: #aaa;
+            margin-top: -30px;
+            margin-bottom: 30px;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 320px;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 14px 20px;
+            border: 2px solid #ffd700;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.08);
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .input-group input:focus {
+            border-color: #fff;
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 0 20px rgba(255,215,0,0.3);
+        }
+        
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 8px;
+            min-width: 200px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            touch-action: manipulation;
+        }
+        
+        .btn:active {
+            transform: scale(0.95);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #1a3a1a;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+            min-width: auto;
+        }
+        
+        /* Лобби */
+        .lobby-info {
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .room-code {
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffd700;
+            letter-spacing: 5px;
+            text-align: center;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        .player-list {
+            list-style: none;
+            margin: 15px 0;
+        }
+        
+        .player-list li {
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Игровой экран */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .trump-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .deck-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .mini-card {
+            width: 45px;
+            height: 65px;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .mini-card.red {
+            color: #e74c3c;
+        }
+        
+        .mini-card.black {
+            color: #2c3e50;
+        }
+        
+        .turn-indicator {
+            font-size: 16px;
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 20px;
+            background: rgba(255,215,0,0.2);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        /* Игровой стол */
+        .game-table {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 250px;
+            position: relative;
+        }
+        
+        .table-area {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px;
+            min-height: 120px;
+        }
+        
+        .card-slot {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .card-on-table {
+            width: 60px;
+            height: 90px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        .card-on-table.attack-card {
+            border-left: 3px solid #e74c3c;
+        }
+        
+        .card-on-table.defend-card {
+            border-left: 3px solid #2ecc71;
+        }
+        
+        .card-on-table.red {
+            color: #e74c3c;
+        }
+        
+        .card-on-table.black {
+            color: #2c3e50;
+        }
+        
+        .card-on-table .card-rank {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .card-on-table .card-suit {
+            font-size: 22px;
+        }
+        
+        .empty-slot {
+            width: 60px;
+            height: 90px;
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 8px;
+        }
+        
+        /* Карты в руке */
+        .player-hand {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 4px;
+            padding: 15px 5px;
+            margin-top: auto;
+            min-height: 120px;
+            align-items: flex-end;
+        }
+        
+        .hand-card {
+            width: 65px;
+            height: 95px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .hand-card:active {
+            transform: translateY(-15px);
+        }
+        
+        .hand-card.selected {
+            transform: translateY(-25px);
+            box-shadow: 0 8px 25px rgba(255,215,0,0.5);
+            border: 2px solid #ffd700;
+        }
+        
+        .hand-card.red {
+            color: #e74c3c;
+        }
+        
+        .hand-card.black {
+            color: #2c3e50;
+        }
+        
+        .hand-card.trump-highlight {
+            background: linear-gradient(135deg, #fff9c4, #ffd700);
+        }
+        
+        .hand-card .card-rank {
+            font-size: 22px;
+            font-weight: bold;
+        }
+        
+        .hand-card .card-suit {
+            font-size: 28px;
+        }
+        
+        /* Кнопки действий */
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            margin-top: 15px;
+        }
+        
+        /* Чат */
+        .chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 280px;
+            max-height: 350px;
+            background: rgba(0,0,0,0.85);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .chat-header {
+            padding: 8px 15px;
+            background: rgba(255,215,0,0.2);
+            border-radius: 15px 15px 0 0;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            max-height: 200px;
+            font-size: 13px;
+        }
+        
+        .chat-message {
+            margin-bottom: 5px;
+            word-break: break-word;
+        }
+        
+        .chat-message .name {
+            color: #ffd700;
+            font-weight: bold;
+        }
+        
+        .chat-input-area {
+            display: flex;
+            padding: 8px;
+            gap: 5px;
+        }
+        
+        .chat-input-area input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ffd700;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 13px;
+            outline: none;
+        }
+        
+        .chat-input-area button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 20px;
+            background: #ffd700;
+            color: #1a3a1a;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        
+        /* Адаптивность для мобильных */
+        @media (max-width: 768px) {
+            .hand-card {
+                width: 52px;
+                height: 78px;
+            }
+            
+            .hand-card .card-rank {
+                font-size: 16px;
+            }
+            
+            .hand-card .card-suit {
+                font-size: 20px;
+            }
+            
+            .card-on-table {
+                width: 48px;
+                height: 72px;
+            }
+            
+            .card-on-table .card-rank {
+                font-size: 14px;
+            }
+            
+            .card-on-table .card-suit {
+                font-size: 18px;
+            }
+            
+            .empty-slot {
+                width: 48px;
+                height: 72px;
+            }
+            
+            .chat-widget {
+                width: 250px;
+                right: 10px;
+                bottom: 10px;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 14px;
+                min-width: 140px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hand-card {
+                width: 42px;
+                height: 63px;
+                gap: 2px;
+            }
+            
+            .hand-card .card-rank {
+                font-size: 13px;
+            }
+            
+            .hand-card .card-suit {
+                font-size: 16px;
+            }
+            
+            .card-on-table {
+                width: 38px;
+                height: 57px;
+            }
+            
+            .card-on-table .card-rank {
+                font-size: 11px;
+            }
+            
+            .card-on-table .card-suit {
+                font-size: 14px;
+            }
+            
+            .empty-slot {
+                width: 38px;
+                height: 57px;
+            }
+            
+            .chat-widget {
+                width: 200px;
+                right: 5px;
+                bottom: 5px;
+                max-height: 250px;
+            }
+            
+            .action-bar {
+                padding: 10px 5px;
+                gap: 5px;
+            }
+            
+            .btn {
+                padding: 10px 15px;
+                font-size: 12px;
+                min-width: 100px;
+            }
+            
+            .table-area {
+                gap: 8px;
+                padding: 10px;
+            }
+        }
+        
+        /* Анимации */
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .animate-in {
+            animation: slideUp 0.4s ease-out;
+        }
+        
+        .status-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .status-message.error {
+            background: rgba(231,76,60,0.3);
+            color: #ff6b6b;
+        }
+        
+        .status-message.success {
+            background: rgba(46,204,113,0.3);
+            color: #2ecc71;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Меню -->
+        <div id="menu-screen" class="screen active">
+            <h1 class="menu-title">♠️ ДУРАК ♥️<br>♣️ ОНЛАЙН ♦️</h1>
+            <p class="menu-subtitle">Многопользовательская карточная игра</p>
+            
+            <div class="input-group">
+                <input type="text" id="playerNameInput" placeholder="👤 Ваше имя" maxlength="20" autocomplete="off">
+            </div>
+            
+            <button class="btn btn-primary" onclick="createRoom()">
+                ✨ Создать комнату
+            </button>
+            
+            <div style="margin: 20px 0; color: #ffd700;">— или —</div>
+            
+            <div class="input-group">
+                <input type="text" id="roomCodeInput" placeholder="🔑 Код комнаты" maxlength="6" autocomplete="off" style="text-transform: uppercase;">
+            </div>
+            
+            <button class="btn btn-secondary" onclick="joinRoom()">
+                🚪 Присоединиться
+            </button>
+            
+            <div id="menu-status" class="status-message" style="display: none;"></div>
+        </div>
+        
+        <!-- Лобби -->
+        <div id="lobby-screen" class="screen">
+            <h2 style="color: #ffd700;">🎯 Комната ожидания</h2>
+            
+            <div class="lobby-info">
+                <p>Код комнаты:</p>
+                <div class="room-code" id="lobbyRoomCode"></div>
+                <p style="font-size: 14px; color: #aaa;">Отправьте этот код друзьям</p>
+            </div>
+            
+            <div class="lobby-info">
+                <p>👥 Игроки (<span id="playerCount">0</span>/4):</p>
+                <ul class="player-list" id="playersList"></ul>
+            </div>
+            
+            <button class="btn btn-primary" id="startGameBtn" onclick="startGame()" disabled>
+                🎮 Начать игру
+            </button>
+            
+            <button class="btn btn-danger btn-small" onclick="leaveRoom()">
+                🚶 Покинуть комнату
+            </button>
+        </div>
+        
+        <!-- Игра -->
+        <div id="game-screen" class="screen">
+            <!-- Шапка -->
+            <div class="game-header">
+                <div class="trump-section">
+                    <span>🃏 Козырь:</span>
+                    <div id="trumpCardDisplay" class="mini-card"></div>
+                </div>
+                
+                <div class="deck-section">
+                    <span>📦 Колода:</span>
+                    <span id="deckCount" style="font-size: 20px; font-weight: bold;">0</span>
+                </div>
+                
+                <div id="turnIndicator" class="turn-indicator"></div>
+            </div>
+            
+            <!-- Игровой стол -->
+            <div class="game-table">
+                <div id="tableArea" class="table-area"></div>
+            </div>
+            
+            <!-- Карты игрока -->
+            <div id="playerHand" class="player-hand"></div>
+            
+            <!-- Кнопки действий -->
+            <div id="actionBar" class="action-bar" style="display: none;">
+                <button class="btn btn-primary btn-small" id="attackBtn" onclick="doAction('attack')">
+                    ⚔️ Подкинуть
+                </button>
+                <button class="btn btn-secondary btn-small" id="passBtn" onclick="doAction('pass')">
+                    ✅ Бито
+                </button>
+                <button class="btn btn-danger btn-small" id="takeBtn" onclick="doAction('take')">
+                    📥 Забрать
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Чат -->
+    <div class="chat-widget" id="chatWidget" style="display: none;">
+        <div class="chat-header" onclick="toggleChat()">💬 Чат ▼</div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Сообщение..." maxlength="200" autocomplete="off">
+            <button onclick="sendChat()">➤</button>
+        </div>
+    </div>
+    
+    <script>
+        // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
+        let ws = null;
+        let roomId = null;
+        let playerId = null;
+        let playerName = '';
+        let gameState = null;
+        let selectedCard = null;
+        
+        // Символы мастей
+        const SUITS = {
+            'hearts': '♥',
+            'diamonds': '♦',
+            'clubs': '♣',
+            'spades': '♠'
+        };
+        
+        // Отображение рангов
+        const RANKS = {
+            '6': '6', '7': '7', '8': '8', '9': '9', '10': '10',
+            'J': 'J', 'Q': 'Q', 'K': 'K', 'A': 'A'
+        };
+        
+        // ===== ПОДКЛЮЧЕНИЕ =====
+        function connect() {
+            const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${location.host}`;
+            
+            ws = new WebSocket(wsUrl);
+            
+            ws.onopen = () => {
+                console.log('✅ Подключено к серверу');
+                showStatus('Подключено!', 'success', 'menu');
+            };
+            
+            ws.onmessage = (e) => {
+                try {
+                    const msg = JSON.parse(e.data);
+                    handleMessage(msg);
+                } catch (err) {
+                    console.error('Ошибка парсинга:', err);
+                }
+            };
+            
+            ws.onerror = () => {
+                showStatus('Ошибка соединения', 'error', 'menu');
+            };
+            
+            ws.onclose = () => {
+                showStatus('Соединение потеряно', 'error', 'menu');
+                setTimeout(connect, 5000); // Переподключение
+            };
+        }
+        
+        // ===== ОБРАБОТКА СООБЩЕНИЙ =====
+        function handleMessage(msg) {
+            switch(msg.type) {
+                case 'room_created':
+                    roomId = msg.roomId;
+                    showScreen('lobby');
+                    document.getElementById('lobbyRoomCode').textContent = msg.roomId;
+                    updatePlayerCount(1);
+                    break;
+                    
+                case 'joined_room':
+                    roomId = msg.roomId;
+                    playerId = msg.playerId;
+                    showScreen('lobby');
+                    document.getElementById('lobbyRoomCode').textContent = msg.roomId;
+                    updatePlayerCount(msg.playerCount);
+                    break;
+                    
+                case 'player_joined':
+                    updatePlayerCount(msg.playerCount);
+                    updatePlayersList(msg.players);
+                    break;
+                    
+                case 'game_state':
+                    gameState = msg;
+                    showScreen('game');
+                    renderGame();
+                    break;
+                    
+                case 'chat_message':
+                    addChat(msg.playerName, msg.message);
+                    break;
+                    
+                case 'game_over':
+                    alert(`🏆 Победитель: ${msg.winner}!`);
+                    setTimeout(() => leaveRoom(), 1000);
+                    break;
+                    
+                case 'error':
+                    alert('❌ ' + msg.message);
+                    break;
+                    
+                case 'player_left':
+                    updatePlayerCount(msg.playerCount);
+                    updatePlayersList(msg.players);
+                    break;
+                    
+                case 'player_disconnected':
+                    alert(msg.message);
+                    break;
+            }
+        }
+        
+        // ===== СОЗДАНИЕ / ПРИСОЕДИНЕНИЕ =====
+        function createRoom() {
+            playerName = document.getElementById('playerNameInput').value.trim();
+            if (!playerName) return alert('Введите имя!');
+            
+            if (ws?.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    type: 'create_room',
+                    playerName: playerName
+                }));
+            } else {
+                alert('Нет подключения к серверу');
+                connect();
+            }
+        }
+        
+        function joinRoom() {
+            playerName = document.getElementById('playerNameInput').value.trim();
+            const code = document.getElementById('roomCodeInput').value.trim().toUpperCase();
+            
+            if (!playerName) return alert('Введите имя!');
+            if (!code) return alert('Введите код комнаты!');
+            
+            if (ws?.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    type: 'join_room',
+                    roomId: code,
+                    playerName: playerName
+                }));
+            } else {
+                alert('Нет подключения к серверу');
+                connect();
+            }
+        }
+        
+        function startGame() {
+            ws.send(JSON.stringify({
+                type: 'start_game',
+                roomId: roomId
+            }));
+        }
+        
+        function leaveRoom() {
+            showScreen('menu');
+            roomId = null;
+            gameState = null;
+            selectedCard = null;
+            document.getElementById('chatWidget').style.display = 'none';
+        }
+        
+        // ===== ИГРОВЫЕ ДЕЙСТВИЯ =====
+        function selectCard(cardElement, cardCode) {
+            // Снять выделение
+            document.querySelectorAll('.hand-card').forEach(c => {
+                c.classList.remove('selected');
+            });
+            
+            // Выделить новую
+            cardElement.classList.add('selected');
+            selectedCard = cardCode;
+        }
+        
+        function doAction(action) {
+            if (!ws || !gameState) return;
+            
+            const msg = {
+                type: 'game_action',
+                roomId: roomId,
+                action: action
+            };
+            
+            if (action === 'attack' || action === 'defend') {
+                if (!selectedCard) {
+                    return alert('Выберите карту!');
+                }
+                msg.card = selectedCard;
+                
+                if (action === 'defend') {
+                    const idx = gameState.table.findIndex(p => !p.defend);
+                    if (idx === -1) {
+                        return alert('Нечего отбивать!');
+                    }
+                    msg.pairIndex = idx;
+                }
+            }
+            
+            ws.send(JSON.stringify(msg));
+            selectedCard = null;
+        }
+        
+        // ===== РЕНДЕРИНГ ИГРЫ =====
+        function renderGame() {
+            if (!gameState) return;
+            
+            // Козырь
+            const trumpDiv = document.getElementById('trumpCardDisplay');
+            if (gameState.trumpCard) {
+                trumpDiv.innerHTML = cardHTML(gameState.trumpCard);
+                trumpDiv.className = `mini-card ${getColor(gameState.trumpCard)}`;
+                trumpDiv.style.display = 'flex';
+            } else {
+                trumpDiv.style.display = 'none';
+            }
+            
+            // Колода
+            document.getElementById('deckCount').textContent = gameState.deckSize;
+            
+            // Стол
+            const table = document.getElementById('tableArea');
+            table.innerHTML = '';
+            
+            gameState.table.forEach((pair, i) => {
+                const slot = document.createElement('div');
+                slot.className = 'card-slot animate-in';
+                
+                slot.innerHTML = `
+                    <div class="card-on-table attack-card ${getColor(pair.attack)}">
+                        ${cardHTML(pair.attack)}
+                    </div>
+                    ${pair.defend ? `
+                        <div class="card-on-table defend-card ${getColor(pair.defend)}">
+                            ${cardHTML(pair.defend)}
+                        </div>
+                    ` : '<div class="empty-slot"></div>'}
+                `;
+                
+                table.appendChild(slot);
+            });
+            
+            // Рука игрока
+            const hand = document.getElementById('playerHand');
+            hand.innerHTML = '';
+            
+            if (gameState.hand) {
+                gameState.hand.forEach(card => {
+                    const div = document.createElement('div');
+                    const isTrump = card.split('_')[1] === gameState.trumpCard?.split('_')[1];
+                    
+                    div.className = `hand-card ${getColor(card)} ${isTrump ? 'trump-highlight' : ''} animate-in`;
+                    div.innerHTML = cardHTML(card);
+                    div.onclick = () => selectCard(div, card);
+                    hand.appendChild(div);
+                });
+            }
+            
+            // Кнопки действий
+            updateActions();
+            
+            // Индикатор хода
+            updateTurnIndicator();
+            
+            // Показать чат
+            document.getElementById('chatWidget').style.display = 'flex';
+        }
+        
+        function cardHTML(cardStr) {
+            const [rank, suit] = cardStr.split('_');
+            const suitSym = SUITS[suit] || suit;
+            const rankVal = RANKS[rank] || rank;
+            return `<div class="card-rank">${rankVal}</div><div class="card-suit">${suitSym}</div>`;
+        }
+        
+        function getColor(cardStr) {
+            if (!cardStr) return '';
+            const suit = cardStr.split('_')[1];
+            return (suit === 'hearts' || suit === 'diamonds') ? 'red' : 'black';
+        }
+        
+        function updateActions() {
+            const bar = document.getElementById('actionBar');
+            const attackBtn = document.getElementById('attackBtn');
+            const passBtn = document.getElementById('passBtn');
+            const takeBtn = document.getElementById('takeBtn');
+            
+            // Скрываем всё
+            [attackBtn, passBtn, takeBtn].forEach(b => b.style.display = 'none');
+            bar.style.display = 'none';
+            
+            if (!gameState) return;
+            
+            const isMyTurn = gameState.currentPlayer === playerId;
+            const isAttacker = gameState.attacker === playerId;
+            const isDefender = gameState.defender === playerId;
+            
+            if (!isMyTurn) return;
+            
+            bar.style.display = 'flex';
+            
+            if (gameState.turnPhase === 'attack' && isAttacker) {
+                attackBtn.style.display = 'block';
+                if (gameState.table.length > 0) {
+                    passBtn.style.display = 'block';
+                }
+            }
+            
+            if (gameState.turnPhase === 'defense' && isDefender) {
+                attackBtn.style.display = 'block';
+                attackBtn.textContent = '🛡️ Отбить';
+                takeBtn.style.display = 'block';
+            }
+        }
+        
+        function updateTurnIndicator() {
+            const ind = document.getElementById('turnIndicator');
+            if (!gameState) {
+                ind.textContent = '';
+                return;
+            }
+            
+            const phase = gameState.turnPhase === 'attack' ? 'Атакует' : 'Защищается';
+            const isMe = gameState.currentPlayer === playerId;
+            
+            ind.textContent = isMe ? `🎯 Ваш ход (${phase})` : `⏳ Ход соперника`;
+        }
+        
+        // ===== ЧАТ =====
+        function sendChat() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            
+            if (text && ws?.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    type: 'chat_message',
+                    roomId: roomId,
+                    message: text
+                }));
+                input.value = '';
+            }
+        }
+        
+        function addChat(name, text) {
+            const container = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = 'chat-message';
+            div.innerHTML = `<span class="name">${name}:</span> ${text}`;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function toggleChat() {
+            const msgs = document.getElementById('chatMessages');
+            const header = document.querySelector('.chat-header');
+            if (msgs.style.display === 'none') {
+                msgs.style.display = 'block';
+                header.textContent = '💬 Чат ▼';
+            } else {
+                msgs.style.display = 'none';
+                header.textContent = '💬 Чат ▶';
+            }
+        }
+        
+        // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
+        function showScreen(name) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            
+            const map = {
+                'menu': 'menu-screen',
+                'lobby': 'lobby-screen',
+                'game': 'game-screen'
+            };
+            
+            const id = map[name];
+            if (id) document.getElementById(id).classList.add('active');
+        }
+        
+        function showStatus(msg, type, screen) {
+            const el = document.getElementById(`${screen}-status`);
+            if (el) {
+                el.textContent = msg;
+                el.className = `status-message ${type}`;
+                el.style.display = 'block';
+                setTimeout(() => el.style.display = 'none', 4000);
+            }
+        }
+        
+        function updatePlayerCount(count) {
+            document.getElementById('playerCount').textContent = count;
+            document.getElementById('startGameBtn').disabled = count < 2;
+        }
+        
+        function updatePlayersList(players) {
+            const list = document.getElementById('playersList');
+            if (list && players) {
+                list.innerHTML = players.map(p => 
+                    `<li>👤 ${p.name} ${p.id === playerId ? '(Вы)' : ''}</li>`
+                ).join('');
+            }
+        }
+        
+        // ===== ОБРАБОТЧИКИ КЛАВИШ =====
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                if (document.activeElement === document.getElementById('chatInput')) {
+                    sendChat();
+                } else if (document.activeElement === document.getElementById('roomCodeInput')) {
+                    joinRoom();
+                } else if (document.activeElement === document.getElementById('playerNameInput')) {
+                    createRoom();
+                }
+            }
+        });
+        
+        // ===== ЗАПУСК =====
+        window.addEventListener('load', () => {
+            connect();
+            
+            // Автофокус на поле имени
+            document.getElementById('playerNameInput').focus();
+        });
+        
+        // Предотвращение зума на мобильных
+        document.addEventListener('gesturestart', (e) => e.preventDefault());
+    </script>
+</body>
+</html>
